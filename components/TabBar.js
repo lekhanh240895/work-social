@@ -1,24 +1,25 @@
 import { useColorScheme } from "nativewind";
-import { useRef } from "react";
+import { useEffect, useState } from "react";
 import {
   View,
-  Text,
   TouchableOpacity,
   Dimensions,
   Animated,
-  StyleSheet,
+  Text,
 } from "react-native";
 import {
   CalendarDaysIcon,
   HomeIcon,
   UsersIcon,
 } from "react-native-heroicons/solid";
+import withDimensions from "./with-dimensions";
 
-export default function MyTabBar({ state, descriptors, navigation }) {
+function TabBar({ state, descriptors, navigation }) {
   const { colorScheme } = useColorScheme();
-  const translateValue = useRef(new Animated.Value(0)).current;
+  const [translateValue] = useState(new Animated.Value(0));
   const totalWidth = Dimensions.get("window").width;
   const tabWidth = totalWidth / state.routes.length;
+  const activeRouteIndex = state.index;
 
   const onTabBarPress = (routeIndex) => {
     Animated.spring(translateValue, {
@@ -27,6 +28,18 @@ export default function MyTabBar({ state, descriptors, navigation }) {
       useNativeDriver: true,
     }).start(); // the animation that animates the active tab circle
   };
+
+  useEffect(() => {
+    Animated.spring(translateValue, {
+      toValue: activeRouteIndex * tabWidth,
+      velocity: 10,
+      useNativeDriver: true,
+    }).start();
+  }, [activeRouteIndex]);
+
+  useEffect(() => {
+    translateValue.setValue(activeRouteIndex * tabWidth);
+  }, [tabWidth]);
 
   const icon = (name, isFocused) => {
     const color = colorScheme === "dark" ? "white" : "black";
@@ -45,7 +58,19 @@ export default function MyTabBar({ state, descriptors, navigation }) {
   };
 
   return (
-    <View className="flex-row justify-between p-5 bg-white dark:bg-slate-800 ">
+    <View className="flex-row h-20 py-2 items-center bg-white dark:bg-slate-800 border-t border-gray-200">
+      <View className="absolute top-1">
+        <Animated.View
+          style={{
+            width: tabWidth,
+            transform: [{ translateX: translateValue }],
+          }}
+          className="h-full justify-center items-center"
+        >
+          <View className="w-12 h-12 bg-[#E1F5FE] rounded-full" />
+        </Animated.View>
+      </View>
+
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key];
         const label =
@@ -55,7 +80,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
             ? options.title
             : route.name;
 
-        const isFocused = state.index === index;
+        const isFocused = activeRouteIndex === index;
 
         const onPress = () => {
           const event = navigation.emit({
@@ -69,7 +94,7 @@ export default function MyTabBar({ state, descriptors, navigation }) {
             navigation.navigate({ name: route.name, merge: true });
           }
 
-          onTabBarPress(index + 1);
+          onTabBarPress(index);
         };
 
         const onLongPress = () => {
@@ -88,15 +113,15 @@ export default function MyTabBar({ state, descriptors, navigation }) {
             testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
-            className="items-center"
+            className="flex-1 justify-center items-center z-10 space-y-1"
           >
-            <View className="bg-[#E1F5FE] rounded-full p-2">
-              {icon(label, isFocused)}
-            </View>
-            <Text className="dark:text-white">{label}</Text>
+            {icon(label, isFocused)}
+            <Text>{label}</Text>
           </TouchableOpacity>
         );
       })}
     </View>
   );
 }
+
+export default withDimensions(TabBar);

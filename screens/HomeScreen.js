@@ -111,7 +111,7 @@ const HomeScreen = ({ navigation }) => {
         <TouchableOpacity
           activeOpacity={colorScheme === "dark" && 0.7}
           className="bg-white dark:bg-slate-800 flex-row items-center justify-between mb-2 px-4 space-x-2 h-20"
-          onPress={() => navigation.navigate("WorkScreen")}
+          onPress={() => navigation.navigate("Work")}
         >
           <Text className="flex-1 dark:text-white text-lg font-bold italic">
             Đừng quên chấm công hôm nay nhé
