@@ -113,10 +113,10 @@ function TabBar({ state, descriptors, navigation }) {
             testID={options.tabBarTestID}
             onPress={onPress}
             onLongPress={onLongPress}
-            className="flex-1 justify-center items-center z-10 space-y-1"
+            className="flex-1 justify-center items-center z-10 space-y-2"
           >
             {icon(label, isFocused)}
-            <Text>{label}</Text>
+            <Text className="dark:text-white">{label}</Text>
           </TouchableOpacity>
         );
       })}
