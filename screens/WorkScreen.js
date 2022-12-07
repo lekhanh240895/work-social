@@ -1,15 +1,109 @@
 import { useColorScheme } from "nativewind";
-import { View, Text, SafeAreaView } from "react-native";
+import { useMemo, useState } from "react";
+import { View, Text, SafeAreaView, TouchableOpacity } from "react-native";
 import { Calendar } from "react-native-calendars";
-import { useDispatch, useSelector } from "react-redux";
-import WorkModal from "../modals/WorkModal";
-import { appSelector } from "../redux/selector";
-import { setSelectedDay, showWorkModal } from "../redux/slices/appSlice";
+import { useDispatch } from "react-redux";
+import { Icon, Overlay } from "@rneui/themed";
 
-const WorkScreen = () => {
-  const { workModalShowed } = useSelector(appSelector);
+import { setSelectedDay, showWorkModal } from "../redux/slices/appSlice";
+import { XMarkIcon } from "react-native-heroicons/solid";
+
+const WorkScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { colorScheme } = useColorScheme();
+  const [workDates, setWorkDates] = useState([
+    {
+      id: 1,
+      date: "2022-12-16",
+      workCount: 1,
+      status: "This is a hard day",
+      attachments: {},
+      startTime: "07:00",
+      endTime: "15:00",
+      selected: true,
+    },
+    {
+      id: 2,
+      date: "2022-12-20",
+      workCount: 2,
+      status: "This is another hard working day",
+      attachments: {},
+      startTime: "14:00",
+      endTime: "22:00",
+      selected: true,
+    },
+    {
+      id: 3,
+      date: "2022-12-25",
+      workCount: 0,
+      status: "This is another hard working day",
+      attachments: {},
+      startTime: "6:00",
+      endTime: "14:00",
+      selected: true,
+    },
+    {
+      id: 3,
+      date: "2022-12-13",
+      workCount: 0.5,
+      status: "This is another hard working day",
+      attachments: {},
+      startTime: "6:00",
+      endTime: "14:00",
+      selected: true,
+    },
+    {
+      id: 3,
+      date: "2022-12-31",
+      workCount: 1.5,
+      status: "This is another hard working day",
+      attachments: {},
+      startTime: "14:00",
+      endTime: "22:00",
+      selected: true,
+    },
+  ]);
+  const [visible, setVisible] = useState(false);
+
+  const toggleOverlay = () => {
+    setVisible(!visible);
+  };
+  const totalWorkCount = useMemo(
+    () =>
+      workDates.reduce((total, workdate) => (total += workdate.workCount), 0),
+    [workDates]
+  );
+
+  const dotColor = (num) => {
+    switch (num) {
+      case 0:
+        return "#ef4444";
+      case 0.5:
+        return "#6e748b";
+      case 1:
+        return "#2dd4bf";
+      case 1.5:
+        return "#fb923c";
+      case 2:
+        return "#6366f1";
+      default:
+        return;
+    }
+  };
+
+  const renderMarkedDates = () => {
+    const obj = {};
+    workDates.forEach((workDate) => {
+      obj[workDate.date] = {
+        // dotColor: dotColor(workDate.workCount),
+        selected: workDate.selected,
+        selectedColor: dotColor(workDate.workCount),
+        marked: true,
+      };
+    });
+    return obj;
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-slate-800 py-10">
       <Text className="text-2xl dark:text-white font-bold text-center uppercase">
@@ -19,27 +113,20 @@ const WorkScreen = () => {
       <View className="flex-1 my-5 space-y-5">
         <Calendar // Handler which gets executed on day press. Default = undefined
           onDayPress={(day) => {
-            dispatch(showWorkModal());
+            const dayMarked = workDates.find(
+              (workdate) => workdate.date === day.dateString
+            );
             dispatch(setSelectedDay(day));
+            navigation.navigate("WorkModal", {
+              dayMarked,
+            });
           }}
           // Handler which gets executed on day long press. Default = undefined
           onDayLongPress={(day) => {
             dispatch(setSelectedDay(day));
             dispatch(showWorkModal());
           }}
-          markedDates={{
-            "2022-12-16": {
-              selected: true,
-              marked: true,
-            },
-            "2022-12-17": {
-              marked: true,
-              selected: true,
-            },
-            "2022-12-18": {
-              marked: true,
-            },
-          }}
+          markedDates={renderMarkedDates()}
           theme={{
             backgroundColor: "inherit",
             calendarBackground: "inherit",
@@ -47,42 +134,84 @@ const WorkScreen = () => {
             dayTextColor: colorScheme === "dark" ? "white" : "black",
             arrowColor: colorScheme === "dark" ? "white" : "default",
             monthTextColor: colorScheme === "dark" ? "white" : "default",
+            todayBackgroundColor: "red",
+            todayTextColor: "white",
           }}
         />
 
         <Text className="text-xl dark:text-white text-center">
           <Text>Số công trong tháng 12 là </Text>
-          <Text className="text-2xl font-extrabold">1</Text>
+          <Text className="text-2xl font-extrabold">{totalWorkCount}</Text>
         </Text>
       </View>
 
-      <Text className="px-4 text-xl dark:text-white font-semibold">
-        Kí hiệu ngày công
-      </Text>
-      <View className="px-4 flex-row justify-between space-x-2 flex-wrap">
-        <View className="flex-row items-center space-x-1">
-          <View className="w-3 h-3 rounded-full bg-red-500 mt-1" />
-          <Text className="text-lg dark:text-white">: 0</Text>
-        </View>
-        <View className="flex-row items-center space-x-1">
-          <View className="w-3 h-3 rounded-full  mt-1 bg-primary" />
-          <Text className="text-lg dark:text-white">: 0.5</Text>
-        </View>
-        <View className="flex-row items-center space-x-1">
-          <View className="w-3 h-3 rounded-full  mt-1 bg-slate-500" />
-          <Text className="text-lg dark:text-white">: 1</Text>
-        </View>
-        <View className="flex-row items-center space-x-1">
-          <View className="w-3 h-3 rounded-full  mt-1 bg-orange-400" />
-          <Text className="text-lg dark:text-white">: 1.5</Text>
-        </View>
-        <View className="flex-row items-center space-x-1">
-          <View className="w-3 h-3 rounded-full  mt-1 bg-indigo-500" />
-          <Text className="text-lg dark:text-white">: 2</Text>
-        </View>
-      </View>
+      <TouchableOpacity
+        onPress={toggleOverlay}
+        className="absolute bottom-6 right-6 bg-slate-600 p-3 rounded-full"
+      >
+        <Icon name="question" color="white" type="antdesign" size={34} />
+      </TouchableOpacity>
 
-      <WorkModal />
+      <Overlay
+        isVisible={visible}
+        onBackdropPress={toggleOverlay}
+        overlayStyle={{
+          width: "90%",
+          borderRadius: 8,
+          padding: 0,
+        }}
+      >
+        <View className="w-full h-96">
+          <Text className="p-4 text-xl dark:text-white font-semibold text-center">
+            Kí hiệu công làm việc
+          </Text>
+
+          <TouchableOpacity
+            onPress={toggleOverlay}
+            className="absolute top-3 right-3"
+          >
+            <XMarkIcon size={30} color="black" />
+          </TouchableOpacity>
+
+          <View className="flex-1 p-4 space-y-4">
+            <View className="flex-row items-center space-x-3">
+              <View className="w-40 h-4 rounded-full bg-[#00adf5] mt-1" />
+              <Text className="text-lg dark:text-white">:</Text>
+              <Text className="text-lg dark:text-white">Ngày hôm nay</Text>
+            </View>
+            <View className="flex-row items-center space-x-3">
+              <View className="w-40 h-4 rounded-full bg-red-500 mt-1" />
+              <Text className="text-lg dark:text-white">:</Text>
+              <Text className="text-lg dark:text-white">0 ngày công</Text>
+            </View>
+            <View className="flex-row items-center space-x-3">
+              <View className="w-40 h-4 rounded-full  mt-1 bg-slate-500" />
+              <Text className="text-lg dark:text-white">:</Text>
+              <Text className="text-lg dark:text-white">0.5 ngày công</Text>
+            </View>
+            <View className="flex-row items-center space-x-3">
+              <View className="w-40 h-4 rounded-full mt-1 bg-primary" />
+              <Text className="text-lg dark:text-white">:</Text>
+              <Text className="text-lg dark:text-white">1 ngày công</Text>
+            </View>
+            <View className="flex-row items-center space-x-3">
+              <View className="w-40 h-4 rounded-full  mt-1 bg-orange-400" />
+              <Text className="text-lg dark:text-white">:</Text>
+              <Text className="text-lg dark:text-white">1.5 ngày công</Text>
+            </View>
+            <View className="flex-row items-center space-x-3">
+              <View className="w-40 h-4 rounded-full  mt-1 bg-indigo-500" />
+              <Text className="text-lg dark:text-white">:</Text>
+              <Text className="text-lg dark:text-white">2 ngày công</Text>
+            </View>
+          </View>
+
+          <Text className="text-lg p-2">
+            <Text className="text-bold underline">Chú ý</Text>
+            <Text>: Chọn ngày để bắt đầu chấm công</Text>
+          </Text>
+        </View>
+      </Overlay>
     </SafeAreaView>
   );
 };

@@ -1,20 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  workModalShowed: false,
-  selectedDay: null,
+  selectedDay: {},
 };
 
 export const counterSlice = createSlice({
   name: "app",
   initialState,
   reducers: {
-    showWorkModal: (state, action) => {
-      state.workModalShowed = true;
-    },
-    hideWorkModal: (state, action) => {
-      state.workModalShowed = false;
-    },
     setSelectedDay: (state, action) => {
       state.selectedDay = action.payload;
     },
