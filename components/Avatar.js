@@ -2,11 +2,11 @@ import { Image, TouchableOpacity } from "react-native";
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 
-const Avatar = (props) => {
+const Avatar = ({ source, ...props }) => {
   const navigation = useNavigation();
   return (
     <TouchableOpacity onPress={() => navigation.navigate("Dashboard")}>
-      <Image {...props} className="w-12 h-12 rounded-full" />
+      <Image {...props} source={source} className="w-12 h-12 rounded-full" />
     </TouchableOpacity>
   );
 };

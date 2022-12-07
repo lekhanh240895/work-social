@@ -1,11 +1,30 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { Modal, View, Text, TouchableOpacity, TextInput } from "react-native";
-import { XMarkIcon } from "react-native-heroicons/solid";
+import {
+  Modal,
+  View,
+  Text,
+  TouchableOpacity,
+  TextInput,
+  SafeAreaView,
+  Image,
+  ScrollView,
+} from "react-native";
+import {
+  ClockIcon,
+  ChevronLeftIcon,
+  PhotoIcon,
+  EllipsisHorizontalIcon,
+  XMarkIcon,
+} from "react-native-heroicons/solid";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
+import { color, Slider } from "@rneui/base";
+import * as ImagePicker from "expo-image-picker";
+
 import { appSelector } from "../redux/selector";
 import { hideWorkModal } from "../redux/slices/appSlice";
-import { CheckBox, Icon } from "@rneui/themed";
+import Avatar from "../components/Avatar";
+import { useColorScheme } from "nativewind";
 
 const WorkModal = () => {
   const { workModalShowed, selectedDay } = useSelector(appSelector);
@@ -15,7 +34,20 @@ const WorkModal = () => {
   const [selectedTime, setSelectedTime] = useState("");
   const [date, setDate] = useState(null);
   const dispatch = useDispatch();
-  const [check2, setCheck2] = useState(false);
+  const [value, setValue] = useState(1);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const { colorScheme } = useColorScheme();
+
+  const pickImageAsync = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setSelectedImage(result.assets[0].uri);
+    }
+  };
 
   useEffect(() => {
     setDate(new Date(selectedDay?.timestamp));
@@ -74,143 +106,169 @@ const WorkModal = () => {
         dispatch(hideWorkModal());
       }}
     >
-      <View
-        className="w-full h-2/5 p-4 absolute bottom-0 bg-white rounded-tl-lg rounded-tr-lg mt-5"
-        style={{
-          shadowColor: "#000",
-          shadowOffset: {
-            width: 0,
-            height: 12,
-          },
-          shadowOpacity: 0.58,
-          shadowRadius: 16.0,
-          elevation: 24,
-        }}
-      >
-        <TouchableOpacity
-          className="absolute top-3 right-3 bg-slate-200 p-2 rounded-full z-10"
-          onPress={() => dispatch(hideWorkModal())}
-        >
-          <XMarkIcon size={24} color="black" opacity={0.8} />
-        </TouchableOpacity>
-        <Text className="text-xl font-semibold text-center">
-          Ngày: {selectedDay?.dateString}
-        </Text>
-
-        <View className="flex-row mt-5 space-x-10">
-          <View className="flex-row space-x-4 items-center">
-            <Text className="text-lg">Giờ bắt đầu:</Text>
-            <TouchableOpacity
-              onPress={() => {
-                showTimepicker();
-                setSelectType("start");
-              }}
-              className="p-2 border border-slate-400 rounded "
-            >
-              <Text>{startTime ? startTime : dateWithouthSecond}</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View className="flex-row space-x-4 items-center">
-            <Text className="text-lg">Giờ nghỉ:</Text>
-
-            <TouchableOpacity
-              onPress={() => {
-                showTimepicker();
-                setSelectType("end");
-              }}
-              className="p-2 border border-slate-400 rounded "
-            >
-              <Text>{endTime ? endTime : dateWithouthSecond}</Text>
+      <View className="w-full h-full absolute bottom-0 bg-white dark:bg-slate-800">
+        {/* Header */}
+        <View className="fixed top-0 w-full py-2 bg-white dark:bg-slate-800 border-b border-gray-200">
+          <View className="flex-row items-center justify-between px-4">
+            <View className="flex-row items-center space-x-4">
+              <TouchableOpacity
+                onPress={() => dispatch(hideWorkModal())}
+                className="bg-slate-200 dark:bg-slate-600 p-2 rounded-full"
+              >
+                <ChevronLeftIcon
+                  size={28}
+                  color={colorScheme === "dark" ? "white" : "black"}
+                />
+              </TouchableOpacity>
+              <Text className="dark:text-white text-lg">Chấm công</Text>
+            </View>
+            <TouchableOpacity className="bg-primary py-2 px-4 rounded items-center justify-center">
+              <Text className="dark:text-white text-white text-base">Lưu</Text>
             </TouchableOpacity>
           </View>
         </View>
 
-        <View className="mt-4 flex-row items-center space-x-4">
-          <Text className="text-lg">Ngày công:</Text>
-          <View className="flex-row items-center space-x-2">
-            <CheckBox
-              center
-              checkedIcon={
-                <Icon
-                  name="radio-button-checked"
-                  type="material"
-                  color="green"
-                  size={25}
+        <ScrollView>
+          <View className="flex-1 px-4 mt-5">
+            <Text className="dark:text-white text-2xl font-semibold text-center">
+              Ngày: {selectedDay?.dateString}
+            </Text>
+
+            <View className="flex-row mt-5 space-x-10">
+              <View className="flex-row space-x-4 items-center">
+                <Text className="dark:text-white text-lg">Giờ bắt đầu:</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    showTimepicker();
+                    setSelectType("start");
+                  }}
+                  className="p-2 border border-slate-400 rounded "
+                >
+                  <Text className="dark:text-white">
+                    {startTime ? startTime : dateWithouthSecond}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View className="flex-row space-x-4 items-center">
+                <Text className="dark:text-white text-lg">Giờ nghỉ:</Text>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    showTimepicker();
+                    setSelectType("end");
+                  }}
+                  className="p-2 border border-slate-400 rounded "
+                >
+                  <Text className="dark:text-white">
+                    {endTime ? endTime : dateWithouthSecond}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View className="mt-4 flex-row items-center space-x-4">
+              <Text className="dark:text-white text-lg w-36">
+                <Text>Ngày công: </Text>
+                <Text className="dark:text-white text-xl font-bold">
+                  {value}
+                </Text>
+              </Text>
+
+              <View className="flex-1">
+                <Slider
+                  value={value}
+                  onValueChange={setValue}
+                  maximumValue={2}
+                  minimumValue={0}
+                  step={0.5}
+                  allowTouchTrack
+                  trackStyle={{
+                    height: 4,
+                    width: "100%",
+                  }}
+                  thumbStyle={{
+                    height: 26,
+                    width: 26,
+                    backgroundColor: "transparent",
+                  }}
+                  thumbProps={{
+                    children: (
+                      <View className="absolute bottom-0 bg-slate-800 rounded-full">
+                        <ClockIcon size={26} color="white" />
+                      </View>
+                    ),
+                  }}
                 />
-              }
-              uncheckedIcon={
-                <Icon
-                  name="radio-button-unchecked"
-                  type="material"
-                  color="grey"
-                  size={25}
+              </View>
+            </View>
+
+            <View className="flex-1">
+              <View className="flex-row space-x-2 my-4 items-stretch">
+                <Avatar
+                  source={{ uri: "https://picsum.photos/500/500" }}
+                  className="w-14 h-14"
                 />
-              }
-              checked={check2}
-              onPress={() => setCheck2(!check2)}
-              title="1"
-              wrapperStyle={{
-                justifyContent: "flex-start",
-              }}
-              containerStyle={{
-                padding: 0,
-                margin: 0,
-              }}
-              textStyle={{ fontSize: 22, marginLeft: 5 }}
-            />
-            <CheckBox
-              center
-              checkedIcon={
-                <Icon
-                  name="radio-button-checked"
-                  type="material"
-                  color="green"
-                  size={25}
-                />
-              }
-              uncheckedIcon={
-                <Icon
-                  name="radio-button-unchecked"
-                  type="material"
-                  color="grey"
-                  size={25}
-                />
-              }
-              checked={check2}
-              onPress={() => setCheck2(!check2)}
-              title="1"
-              wrapperStyle={{
-                justifyContent: "flex-start",
-              }}
-              containerStyle={{
-                padding: 0,
-                margin: 0,
-              }}
-              textStyle={{ fontSize: 22, marginLeft: 5 }}
-            />
+                <View className="space-y-1">
+                  <Text className="dark:text-white">Lê Khánh</Text>
+                  <Text className="dark:text-white bg-slate-200 px-2 py-1 rounded-lg text-gray-600">
+                    Công khai
+                  </Text>
+                </View>
+              </View>
+
+              <TextInput
+                placeholder="Ngày làm việc của bạn như thế nào?"
+                className="text-base leading-6 mb-4"
+                multiline={true}
+                underlineColorAndroid="transparent"
+                placeholderTextColor={colorScheme === "dark" && "white"}
+                style={{
+                  color: colorScheme === "dark" && "white",
+                }}
+              />
+
+              {selectedImage && (
+                <View className="mb-4">
+                  <Image
+                    source={{ uri: selectedImage }}
+                    className="w-full h-96"
+                    resizeMode="cover"
+                  />
+
+                  <TouchableOpacity
+                    className="bg-slate-200 p-2 absolute top-2 right-2 rounded-full"
+                    onPress={() => setSelectedImage("")}
+                  >
+                    <XMarkIcon size={28} color="black" />
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
           </View>
-        </View>
+        </ScrollView>
 
-        <View className="flex-row space-x-4 items-center my-4">
-          <Text className="text-lg">Note:</Text>
-          <TextInput
-            placeholder="Ghi chú ngày làm việc của bạn"
-            className="flex-1 bg-slate-200 p-4 rounded-lg"
-          />
-        </View>
+        <SafeAreaView className="absolute bottom-0 w-full bg-white dark:bg-slate-800 border-t border-gray-300">
+          <View className="px-4 py-1 flex-row justify-between items-center">
+            <TouchableOpacity
+              onPress={pickImageAsync}
+              className="bg-white dark:bg-gray-600 p-2 rounded-full"
+            >
+              {colorScheme === "dark" ? (
+                <PhotoIcon size={24} color="white" />
+              ) : (
+                <PhotoIcon size={40} color="#2dd4bf" />
+              )}
+            </TouchableOpacity>
 
-        <View className="flex-row space-x-4 justify-end">
-          <TouchableOpacity className="bg-slate-200 h-10 items-center justify-center w-16 rounded-lg">
-            <Text className="text-base">Lưu</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="bg-red-500 h-10 items-center justify-center w-16 rounded-lg"
-            onPress={() => dispatch(hideWorkModal())}
-          >
-            <Text className="text-base text-white">Hủy</Text>
-          </TouchableOpacity>
-        </View>
+            <TouchableOpacity className="bg-slate-200 dark:bg-gray-600 p-2 rounded-full">
+              <EllipsisHorizontalIcon
+                size={24}
+                color={colorScheme === "dark" ? "white" : "black"}
+              />
+            </TouchableOpacity>
+          </View>
+        </SafeAreaView>
       </View>
     </Modal>
   );
