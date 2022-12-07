@@ -50,33 +50,34 @@ const WorkScreen = () => {
           }}
         />
 
-        <Text className="text-xl dark:text-white font-bold text-center">
-          Số công trong tháng 12 là 1
+        <Text className="text-xl dark:text-white text-center">
+          <Text>Số công trong tháng 12 là </Text>
+          <Text className="text-2xl font-extrabold">1</Text>
         </Text>
       </View>
 
-      <Text className="px-2 text-lg dark:text-white font-bold">
-        Ghi chú chấm công:
+      <Text className="px-4 text-xl dark:text-white font-semibold">
+        Kí hiệu ngày công
       </Text>
-      <View className="px-2 flex-row justify-between space-x-2 flex-wrap">
+      <View className="px-4 flex-row justify-between space-x-2 flex-wrap">
         <View className="flex-row items-center space-x-1">
-          <View className="w-16 h-4 bg-red-500" />
+          <View className="w-3 h-3 rounded-full bg-red-500 mt-1" />
           <Text className="text-lg dark:text-white">: 0</Text>
         </View>
         <View className="flex-row items-center space-x-1">
-          <View className="w-16 h-4 bg-primary" />
+          <View className="w-3 h-3 rounded-full  mt-1 bg-primary" />
           <Text className="text-lg dark:text-white">: 0.5</Text>
         </View>
         <View className="flex-row items-center space-x-1">
-          <View className="w-16 h-4 bg-slate-500" />
+          <View className="w-3 h-3 rounded-full  mt-1 bg-slate-500" />
           <Text className="text-lg dark:text-white">: 1</Text>
         </View>
         <View className="flex-row items-center space-x-1">
-          <View className="w-16 h-4 bg-pink-400" />
+          <View className="w-3 h-3 rounded-full  mt-1 bg-orange-400" />
           <Text className="text-lg dark:text-white">: 1.5</Text>
         </View>
         <View className="flex-row items-center space-x-1">
-          <View className="w-16 h-4 bg-yellow-400" />
+          <View className="w-3 h-3 rounded-full  mt-1 bg-indigo-500" />
           <Text className="text-lg dark:text-white">: 2</Text>
         </View>
       </View>
