@@ -24,6 +24,7 @@ import * as ImagePicker from "expo-image-picker";
 import { appSelector } from "../redux/selector";
 import Avatar from "../components/Avatar";
 import { useColorScheme } from "nativewind";
+import { addWork, updateWork } from "../redux/slices/worksSlice";
 
 const WorkModalScreen = ({ navigation, route }) => {
   const { selectedDay } = useSelector(appSelector);
@@ -37,6 +38,7 @@ const WorkModalScreen = ({ navigation, route }) => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [status, setStatus] = useState("");
   const { dayMarked } = route.params;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const dateWithouthSecond = new Date()
@@ -110,16 +112,28 @@ const WorkModalScreen = ({ navigation, route }) => {
     showMode("time");
   };
 
-  const handleAdd = () => {
+  const handleSave = () => {
     const workDate = {
       id: Date.now(),
       date: selectedDay.dateString,
       workCount: value,
       startTime,
       endTime,
-      status: "This is a hard day",
+      status,
       attachments: [selectedImage],
+      selected: true,
     };
+    if (dayMarked) {
+      dispatch(
+        updateWork({
+          ...workDate,
+          id: dayMarked.id,
+        })
+      );
+    } else {
+      dispatch(addWork(workDate));
+    }
+    navigation.goBack();
     setStatus(0);
     setValue(1);
   };
@@ -127,8 +141,8 @@ const WorkModalScreen = ({ navigation, route }) => {
   return (
     <View className="flex-1 bg-white dark:bg-slate-800">
       {/* Header */}
-      <View className="fixed top-0 w-full py-2 bg-white dark:bg-slate-800 border-b border-gray-200">
-        <View className="flex-row items-center justify-between px-4">
+      <View className="fixed top-0 w-full p-4 bg-white dark:bg-slate-800 border-b border-gray-200">
+        <View className="flex-row items-center justify-between">
           <View className="flex-row items-center space-x-4">
             <TouchableOpacity
               className="bg-slate-200 dark:bg-slate-600 p-2 rounded-full"
@@ -144,7 +158,7 @@ const WorkModalScreen = ({ navigation, route }) => {
           <TouchableOpacity className="bg-primary py-2 px-4 rounded items-center justify-center">
             <Text
               className="dark:text-white text-white text-base"
-              onPress={handleAdd}
+              onPress={handleSave}
             >
               Lưu
             </Text>
@@ -187,8 +201,8 @@ const WorkModalScreen = ({ navigation, route }) => {
             </View>
           </View>
 
-          <View className="mt-4 flex-row items-center space-x-4">
-            <Text className="dark:text-white text-lg w-36">
+          <View className="mt-4 flex-row items-center">
+            <Text className="dark:text-white text-lg w-32">
               <Text>Số công: </Text>
               <Text className="dark:text-white text-xl font-bold">{value}</Text>
             </Text>

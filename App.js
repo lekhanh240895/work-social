@@ -10,13 +10,13 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <Provider store={store}>
+    <Provider store={store}>
+      <NavigationContainer>
         <Stack.Navigator
           initialRouteName="Login"
           screenOptions={{
             headerShown: false,
-            // statusBarStyle: "dark",
+            statusBarStyle: "dark",
           }}
         >
           <Stack.Screen name="Login" component={LoginScreen} />
@@ -30,7 +30,7 @@ export default function App() {
             }}
           />
         </Stack.Navigator>
-      </Provider>
-    </NavigationContainer>
+      </NavigationContainer>
+    </Provider>
   );
 }

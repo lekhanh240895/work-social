@@ -2,76 +2,25 @@ import { useColorScheme } from "nativewind";
 import { useMemo, useState } from "react";
 import { View, Text, SafeAreaView, TouchableOpacity } from "react-native";
 import { Calendar } from "react-native-calendars";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Icon, Overlay } from "@rneui/themed";
-
-import { setSelectedDay, showWorkModal } from "../redux/slices/appSlice";
+import { setSelectedDay } from "../redux/slices/appSlice";
 import { XMarkIcon } from "react-native-heroicons/solid";
+import { worksSelector } from "../redux/selector";
 
 const WorkScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { colorScheme } = useColorScheme();
-  const [workDates, setWorkDates] = useState([
-    {
-      id: 1,
-      date: "2022-12-16",
-      workCount: 1,
-      status: "This is a hard day",
-      attachments: {},
-      startTime: "07:00",
-      endTime: "15:00",
-      selected: true,
-    },
-    {
-      id: 2,
-      date: "2022-12-20",
-      workCount: 2,
-      status: "This is another hard working day",
-      attachments: {},
-      startTime: "14:00",
-      endTime: "22:00",
-      selected: true,
-    },
-    {
-      id: 3,
-      date: "2022-12-25",
-      workCount: 0,
-      status: "This is another hard working day",
-      attachments: {},
-      startTime: "6:00",
-      endTime: "14:00",
-      selected: true,
-    },
-    {
-      id: 3,
-      date: "2022-12-13",
-      workCount: 0.5,
-      status: "This is another hard working day",
-      attachments: {},
-      startTime: "6:00",
-      endTime: "14:00",
-      selected: true,
-    },
-    {
-      id: 3,
-      date: "2022-12-31",
-      workCount: 1.5,
-      status: "This is another hard working day",
-      attachments: {},
-      startTime: "14:00",
-      endTime: "22:00",
-      selected: true,
-    },
-  ]);
   const [visible, setVisible] = useState(false);
+  const { worksList } = useSelector(worksSelector);
 
   const toggleOverlay = () => {
     setVisible(!visible);
   };
   const totalWorkCount = useMemo(
     () =>
-      workDates.reduce((total, workdate) => (total += workdate.workCount), 0),
-    [workDates]
+      worksList?.reduce((total, workdate) => (total += workdate.workCount), 0),
+    [worksList]
   );
 
   const dotColor = (num) => {
@@ -93,7 +42,7 @@ const WorkScreen = ({ navigation }) => {
 
   const renderMarkedDates = () => {
     const obj = {};
-    workDates.forEach((workDate) => {
+    worksList?.forEach((workDate) => {
       obj[workDate.date] = {
         // dotColor: dotColor(workDate.workCount),
         selected: workDate.selected,
@@ -113,7 +62,7 @@ const WorkScreen = ({ navigation }) => {
       <View className="flex-1 my-5 space-y-5">
         <Calendar // Handler which gets executed on day press. Default = undefined
           onDayPress={(day) => {
-            const dayMarked = workDates.find(
+            const dayMarked = worksList?.find(
               (workdate) => workdate.date === day.dateString
             );
             dispatch(setSelectedDay(day));
@@ -134,8 +83,6 @@ const WorkScreen = ({ navigation }) => {
             dayTextColor: colorScheme === "dark" ? "white" : "black",
             arrowColor: colorScheme === "dark" ? "white" : "default",
             monthTextColor: colorScheme === "dark" ? "white" : "default",
-            todayBackgroundColor: "red",
-            todayTextColor: "white",
           }}
         />
 
