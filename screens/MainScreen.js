@@ -4,6 +4,7 @@ import { useColorScheme } from "nativewind";
 import TabBar from "../components/TabBar";
 import DashboardScreen from "./DashboardScreen";
 import HomeScreen from "./HomeScreen";
+import MessagesScreen from "./MessagesScreen";
 import WorkScreen from "./WorkScreen";
 
 const Tab = createBottomTabNavigator();
@@ -24,6 +25,7 @@ const MainScreen = () => {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Dashboard" component={DashboardScreen} />
       <Tab.Screen name="Work" component={WorkScreen} />
+      <Tab.Screen name="Messages" component={MessagesScreen} />
     </Tab.Navigator>
   );
 };

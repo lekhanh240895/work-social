@@ -13,10 +13,10 @@ import {
 import {
   ClockIcon,
   ChevronLeftIcon,
-  PhotoIcon,
   EllipsisHorizontalIcon,
   XMarkIcon,
 } from "react-native-heroicons/solid";
+import { PhotoIcon } from "react-native-heroicons/outline";
 import { DateTimePickerAndroid } from "@react-native-community/datetimepicker";
 import { Slider } from "@rneui/base";
 import * as ImagePicker from "expo-image-picker";
@@ -37,8 +37,10 @@ const WorkModalScreen = ({ navigation, route }) => {
   const [value, setValue] = useState(1);
   const [selectedImage, setSelectedImage] = useState(null);
   const [status, setStatus] = useState("");
-  const { dayMarked } = route.params;
+  const { dayMarked } = route.params || {};
   const dispatch = useDispatch();
+
+  console.log({ date });
 
   useEffect(() => {
     const dateWithouthSecond = new Date()
@@ -155,6 +157,7 @@ const WorkModalScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             <Text className="dark:text-white text-lg">Chấm công</Text>
           </View>
+
           <TouchableOpacity className="bg-primary py-2 px-4 rounded items-center justify-center">
             <Text
               className="dark:text-white text-white text-base"
@@ -260,6 +263,7 @@ const WorkModalScreen = ({ navigation, route }) => {
               }}
               value={status}
               onChangeText={setStatus}
+              autoFocus={true}
             />
 
             {selectedImage && (

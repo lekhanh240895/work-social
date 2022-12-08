@@ -8,10 +8,11 @@ import {
   Text,
 } from "react-native";
 import {
+  ChatBubbleBottomCenterTextIcon,
+  UsersIcon,
   CalendarDaysIcon,
   HomeIcon,
-  UsersIcon,
-} from "react-native-heroicons/solid";
+} from "react-native-heroicons/outline";
 import withDimensions from "./with-dimensions";
 
 function TabBar({ state, descriptors, navigation }) {
@@ -48,6 +49,13 @@ function TabBar({ state, descriptors, navigation }) {
         return <HomeIcon size={34} color={isFocused ? "#2dd4bf" : color} />;
       case "Dashboard":
         return <UsersIcon size={34} color={isFocused ? "#2dd4bf" : color} />;
+      case "Messages":
+        return (
+          <ChatBubbleBottomCenterTextIcon
+            size={34}
+            color={isFocused ? "#2dd4bf" : color}
+          />
+        );
       case "Work":
         return (
           <CalendarDaysIcon size={34} color={isFocused ? "#2dd4bf" : color} />

@@ -5,7 +5,11 @@ import { Calendar } from "react-native-calendars";
 import { useDispatch, useSelector } from "react-redux";
 import { Icon, Overlay } from "@rneui/themed";
 import { setSelectedDay } from "../redux/slices/appSlice";
-import { XMarkIcon } from "react-native-heroicons/solid";
+import {
+  ChevronLeftIcon,
+  EllipsisHorizontalIcon,
+  XMarkIcon,
+} from "react-native-heroicons/solid";
 import { worksSelector } from "../redux/selector";
 
 const WorkScreen = ({ navigation }) => {
@@ -54,10 +58,26 @@ const WorkScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white dark:bg-slate-800 py-10">
-      <Text className="text-2xl dark:text-white font-bold text-center uppercase">
-        Bảng chấm công
-      </Text>
+    <SafeAreaView className="flex-1 bg-white dark:bg-slate-800">
+      <View className="flex-row items-center justify-between p-4">
+        <TouchableOpacity
+          className="bg-slate-200 dark:bg-slate-600 p-2 rounded-full"
+          onPress={() => navigation.goBack()}
+        >
+          <ChevronLeftIcon
+            size={24}
+            color={colorScheme === "dark" ? "white" : "black"}
+          />
+        </TouchableOpacity>
+
+        <Text className="text-2xl dark:text-white font-bold text-center uppercase">
+          Bảng chấm công
+        </Text>
+
+        <TouchableOpacity>
+          <EllipsisHorizontalIcon size={34} color="black" />
+        </TouchableOpacity>
+      </View>
 
       <View className="flex-1 my-5 space-y-5">
         <Calendar // Handler which gets executed on day press. Default = undefined
@@ -86,10 +106,14 @@ const WorkScreen = ({ navigation }) => {
           }}
         />
 
-        <Text className="text-xl dark:text-white text-center">
-          <Text>Số công trong tháng 12 là </Text>
-          <Text className="text-2xl font-extrabold">{totalWorkCount}</Text>
-        </Text>
+        <View className="text-xl dark:text-white text-center space-y-4">
+          <Text className="text-xl dark:text-white text-center">
+            Số công trong tháng 12 của bạn
+          </Text>
+          <Text className="text-5xl font-extrabold dark:text-white text-center">
+            {totalWorkCount}
+          </Text>
+        </View>
       </View>
 
       <TouchableOpacity

@@ -1,15 +1,19 @@
-import { SafeAreaView } from "react-native";
+import { FlatList } from "react-native";
 import React from "react";
 import Post from "./Post";
+import { useSelector } from "react-redux";
+import { worksSelector } from "../redux/selector";
+const Posts = ({ headerComponent = null }) => {
+  const { worksList } = useSelector(worksSelector);
 
-const Posts = () => {
+  const renderItem = ({ item }) => <Post item={item} />;
   return (
-    <SafeAreaView className="flex-1">
-      <Post />
-      <Post />
-      <Post />
-      <Post />
-    </SafeAreaView>
+    <FlatList
+      data={worksList}
+      renderItem={renderItem}
+      keyExtractor={(item) => item.id}
+      ListHeaderComponent={headerComponent}
+    />
   );
 };
 

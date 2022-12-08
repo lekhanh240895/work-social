@@ -10,7 +10,7 @@ import { useState } from "react";
 import { useColorScheme } from "nativewind";
 
 const LoginScreen = ({ navigation }) => {
-  let { colorScheme, toggleColorScheme } = useColorScheme();
+  const { colorScheme, toggleColorScheme } = useColorScheme();
   const [isDarkMode, setIsDarkMode] = useState(colorScheme === "dark");
 
   const toggleSwitch = () => {
@@ -19,7 +19,21 @@ const LoginScreen = ({ navigation }) => {
   };
   return (
     <SafeAreaView className="flex-1 bg-white dark:bg-slate-800 items-center justify-center">
-      <View className="absolute left-5 top-5">
+      <View
+        className="absolute left-5 top-5"
+        style={{
+          shadowColor: "#000",
+          shadowOffset: {
+            width: 0,
+            height: 3,
+          },
+          shadowOpacity: 0.27,
+          shadowRadius: 4.65,
+          elevation: 6,
+          borderRadius: 9999,
+          padding: 1,
+        }}
+      >
         {isDarkMode ? (
           <Image
             source={require("../assets/images/moon-removebg.png")}

@@ -4,6 +4,7 @@ const initialState = {
   worksList: [
     {
       id: 1,
+      userID: 1,
       date: "2022-12-16",
       workCount: 1,
       status: "This is a hard day",
@@ -14,6 +15,7 @@ const initialState = {
     },
     {
       id: 2,
+      userID: 1,
       date: "2022-12-20",
       workCount: 2,
       status: "This is another hard working day",
@@ -24,6 +26,7 @@ const initialState = {
     },
     {
       id: 3,
+      userID: 1,
       date: "2022-12-25",
       workCount: 0,
       status: "This is another hard working day",
@@ -34,6 +37,7 @@ const initialState = {
     },
     {
       id: 4,
+      userID: 1,
       date: "2022-12-13",
       workCount: 0.5,
       status: "This is another hard working day",
@@ -44,9 +48,10 @@ const initialState = {
     },
     {
       id: 5,
+      userID: 1,
       date: "2022-12-31",
       workCount: 1.5,
-      status: "This is another hard working day",
+      status: "",
       attachments: [],
       startTime: "14:00",
       endTime: "22:00",
